@@ -3,6 +3,37 @@
 #include "Device.h"
 #include "PathMgr.h"
 
+namespace
+{
+	HRESULT CompileShader(const wstring& relativePath, const string& entryPoint, const char* target, ID3DBlob** bytecode)
+	{
+		const wstring path = CONTENT_PATH + relativePath;
+		ComPtr<ID3DBlob> errors;
+		const HRESULT result = D3DCompileFromFile(path.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+			entryPoint.c_str(), target, D3DCOMPILE_DEBUG, 0, bytecode, errors.GetAddressOf());
+		if (SUCCEEDED(result))
+			return result;
+
+		wchar_t resultCode[11] = {};
+		swprintf_s(resultCode, L"0x%08lX", static_cast<unsigned long>(result));
+		wstring message = path + L"\n" + wstring(entryPoint.begin(), entryPoint.end()) + L" (" + resultCode + L")";
+		if (errors)
+		{
+			const char* text = static_cast<const char*>(errors->GetBufferPointer());
+			const int length = MultiByteToWideChar(CP_ACP, 0, text, -1, nullptr, 0);
+			if (length > 1)
+			{
+				wstring details(length, L'\0');
+				MultiByteToWideChar(CP_ACP, 0, text, -1, details.data(), length);
+				message += L"\n\n";
+				message += details.c_str();
+			}
+		}
+		MessageBoxW(nullptr, message.c_str(), L"쉐이더 컴파일 실패", MB_OK | MB_ICONERROR);
+		return result;
+	}
+}
+
 AGraphicShader::AGraphicShader()
 	: Asset(ASSET_TYPE::GRAPHICSHADER)
 	, m_Topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
@@ -18,22 +49,9 @@ AGraphicShader::~AGraphicShader()
 
 int AGraphicShader::CreateVertexShader(const wstring& _RelativeFilePath, const string& _FuncName)
 {
-	// VertexShader
-	// 컴파일할 VertexShader 함수가 작성되어있는 파일의 절대 경로	
-	wstring Path = PathMgr::GetInst()->GetContentPath();
-	Path += _RelativeFilePath; // 상대경로
-
-	// 에러메시지 출력용
-	ComPtr<ID3DBlob> Err;
-
-	if (FAILED(D3DCompileFromFile(Path.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-		, _FuncName.c_str(), "vs_5_0", D3DCOMPILE_DEBUG, 0
-		, m_VSBlob.GetAddressOf(), Err.GetAddressOf())))
-	{
-		const char* pErrMsg = (const char*)Err->GetBufferPointer();
-		MessageBoxA(nullptr, pErrMsg, "쉐이더 생성 실패", MB_OK);
-		return E_FAIL;
-	}
+	const HRESULT result = CompileShader(_RelativeFilePath, _FuncName, "vs_5_0", m_VSBlob.GetAddressOf());
+	if (FAILED(result))
+		return result;
 
 	// 컴파일한 Shader 코드로 VertexShader 만들기
 	if (FAILED(DEVICE->CreateVertexShader(m_VSBlob->GetBufferPointer()
@@ -89,20 +107,9 @@ int AGraphicShader::CreateVertexShader(const wstring& _RelativeFilePath, const s
 
 int AGraphicShader::CreatePixelShader(const wstring& _RelativeFilePath, const string& _FuncName)
 {
-	wstring Path = PathMgr::GetInst()->GetContentPath() + _RelativeFilePath;
-
-	// 에러메시지 출력용
-	ComPtr<ID3DBlob> Err;
-
-	// PixelShader
-	if (FAILED(D3DCompileFromFile(Path.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-		, _FuncName.c_str(), "ps_5_0", D3DCOMPILE_DEBUG, 0
-		, m_PSBlob.GetAddressOf(), Err.GetAddressOf())))
-	{
-		const char* pErrMsg = (const char*)Err->GetBufferPointer();
-		MessageBoxA(nullptr, pErrMsg, "쉐이더 생성 실패", MB_OK);
-		return E_FAIL;
-	}
+	const HRESULT result = CompileShader(_RelativeFilePath, _FuncName, "ps_5_0", m_PSBlob.GetAddressOf());
+	if (FAILED(result))
+		return result;
 
 	// 컴파일한 Shader 코드로 PixelShader 만들기
 	if (FAILED(DEVICE->CreatePixelShader(m_PSBlob->GetBufferPointer()

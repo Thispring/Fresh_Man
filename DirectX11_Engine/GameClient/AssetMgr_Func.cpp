@@ -297,7 +297,7 @@ void AssetMgr::CreateEngineMesh()
 	AddAsset(L"LargeBaseConeMesh_LineStrip", pMesh.Get());
 }
 
-void AssetMgr::CreateEngineShader()
+HRESULT AssetMgr::CreateEngineShader()
 {
 	// ===========================
 	// 기본 2D 파이프라인(쉐이더) 생성
@@ -305,8 +305,9 @@ void AssetMgr::CreateEngineShader()
 	Ptr<AGraphicShader> pShader = nullptr;
 
 	pShader = NEW AGraphicShader;
-	pShader->CreateVertexShader(L"Shader\\std2d.fx", "VS_Std2D");
-	pShader->CreatePixelShader(L"Shader\\std2d.fx", "PS_Std2D");
+	if (FAILED(pShader->CreateVertexShader(L"Shader\\std2d.fx", "VS_Std2D"))
+		|| FAILED(pShader->CreatePixelShader(L"Shader\\std2d.fx", "PS_Std2D")))
+		return E_FAIL;
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	pShader->SetBSType(BS_TYPE::ALPHABLEND);
 	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
@@ -320,8 +321,9 @@ void AssetMgr::CreateEngineShader()
 	// =====================
 	pShader = nullptr;
 	pShader = NEW AGraphicShader;
-	pShader->CreateVertexShader(L"Shader\\std2d.fx", "VS_Std2D");
-	pShader->CreatePixelShader(L"Shader\\std2d.fx", "PS_Std2D");
+	if (FAILED(pShader->CreateVertexShader(L"Shader\\std2d.fx", "VS_Std2D"))
+		|| FAILED(pShader->CreatePixelShader(L"Shader\\std2d.fx", "PS_Std2D")))
+		return E_FAIL;
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	pShader->SetBSType(BS_TYPE::ONE_ONE);
 	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
@@ -335,8 +337,9 @@ void AssetMgr::CreateEngineShader()
 	//=================
 	pShader = nullptr;
 	pShader = NEW AGraphicShader;
-	pShader->CreateVertexShader(L"Shader\\dbg.fx", "VS_Debug");
-	pShader->CreatePixelShader(L"Shader\\dbg.fx", "PS_Debug");
+	if (FAILED(pShader->CreateVertexShader(L"Shader\\dbg.fx", "VS_Debug"))
+		|| FAILED(pShader->CreatePixelShader(L"Shader\\dbg.fx", "PS_Debug")))
+		return E_FAIL;
 	pShader->SetTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);	// 토폴로지 설정
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	pShader->SetDSType(DS_TYPE::NO_TEST_NO_WRITE);				// Debug Shader 타입
@@ -353,8 +356,9 @@ void AssetMgr::CreateEngineShader()
 	// ===============
 	pShader = NEW AGraphicShader;
 	pShader->SetName(L"BillboardShader");
-	pShader->CreateVertexShader(L"Shader\\billboard.fx", "VS_Billboard");
-	pShader->CreatePixelShader(L"Shader\\billboard.fx", "PS_Billboard");
+	if (FAILED(pShader->CreateVertexShader(L"Shader\\billboard.fx", "VS_Billboard"))
+		|| FAILED(pShader->CreatePixelShader(L"Shader\\billboard.fx", "PS_Billboard")))
+		return E_FAIL;
 	pShader->SetBSType(BS_TYPE::DEFAULT);
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
@@ -367,8 +371,9 @@ void AssetMgr::CreateEngineShader()
 	// ============
 	pShader = NEW AGraphicShader;
 	pShader->SetName(L"SpriteShader");
-	pShader->CreateVertexShader(L"Shader\\sprite.fx", "VS_Sprite");
-	pShader->CreatePixelShader(L"Shader\\sprite.fx", "PS_Sprite");
+	if (FAILED(pShader->CreateVertexShader(L"Shader\\sprite.fx", "VS_Sprite"))
+		|| FAILED(pShader->CreatePixelShader(L"Shader\\sprite.fx", "PS_Sprite")))
+		return E_FAIL;
 	pShader->SetBSType(BS_TYPE::DEFAULT);
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
@@ -381,8 +386,9 @@ void AssetMgr::CreateEngineShader()
 	// ==============
 	pShader = NEW AGraphicShader;
 	pShader->SetName(L"FlipbookShader");
-	pShader->CreateVertexShader(L"Shader\\flipbook.fx", "VS_Flipbook");
-	pShader->CreatePixelShader(L"Shader\\flipbook.fx", "PS_Flipbook");
+	if (FAILED(pShader->CreateVertexShader(L"Shader\\flipbook.fx", "VS_Flipbook"))
+		|| FAILED(pShader->CreatePixelShader(L"Shader\\flipbook.fx", "PS_Flipbook")))
+		return E_FAIL;
 	pShader->SetBSType(BS_TYPE::DEFAULT);
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
@@ -395,8 +401,9 @@ void AssetMgr::CreateEngineShader()
 	// ==========================
 	pShader = NEW AGraphicShader;
 	pShader->SetName(L"SavePointShader");
-	pShader->CreateVertexShader(L"Shader\\savePoint.fx", "VS_Flipbook");
-	pShader->CreatePixelShader(L"Shader\\savePoint.fx", "PS_Flipbook");
+	if (FAILED(pShader->CreateVertexShader(L"Shader\\savePoint.fx", "VS_Flipbook"))
+		|| FAILED(pShader->CreatePixelShader(L"Shader\\savePoint.fx", "PS_Flipbook")))
+		return E_FAIL;
 	pShader->SetBSType(BS_TYPE::DEFAULT);
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
@@ -409,13 +416,16 @@ void AssetMgr::CreateEngineShader()
 	// =============
 	pShader = NEW AGraphicShader;
 	pShader->SetName(L"TileShader");
-	pShader->CreateVertexShader(L"Shader\\tile.fx", "VS_Tile");
-	pShader->CreatePixelShader(L"Shader\\tile.fx", "PS_Tile");
+	if (FAILED(pShader->CreateVertexShader(L"Shader\\tile.fx", "VS_Tile"))
+		|| FAILED(pShader->CreatePixelShader(L"Shader\\tile.fx", "PS_Tile")))
+		return E_FAIL;
 	pShader->SetBSType(BS_TYPE::DEFAULT);
 	pShader->SetRSType(RS_TYPE::CULL_NONE);
 	pShader->AddShaderParam(SHADER_PARAM::VEC4, 0, L"TintColor");
 	pShader->AddShaderParam(SHADER_PARAM::TEX, 0, L"OutColor");
 	AssetMgr::GetInst()->AddAsset(pShader->GetName(), pShader.Get());
+
+	return S_OK;
 }
 
 void AssetMgr::CreateEngineTexture()

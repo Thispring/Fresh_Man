@@ -38,6 +38,16 @@ int Engine::Progress()
 	// DeltaTime 계산
 	TimeMgr::GetInst()->Tick();
 
+	// 입력과 렌더링이 같은 클라이언트 픽셀 크기를 사용하도록 맞춥니다.
+	RECT clientRect = {};
+	if (GetClientRect(m_hWnd, &clientRect) && clientRect.right > 0 && clientRect.bottom > 0)
+	{
+		const Vec2 clientSize(static_cast<float>(clientRect.right), static_cast<float>(clientRect.bottom));
+		Device* device = Device::GetInst();
+		if (clientSize != device->GetRenderResolution() && FAILED(device->ResizeSwapChain(clientSize)))
+			return E_FAIL;
+	}
+
 	// Key 상태 계산
 	KeyMgr::GetInst()->Tick();
 
@@ -144,9 +154,6 @@ void Engine::ToggleFullScreen()
 		SetWindowLongPtr(m_hWnd, GWL_STYLE, WS_POPUP);
 		SetWindowPos(m_hWnd, HWND_TOP, offsetX, offsetY, targetW, targetH, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
 
-		// 스왑체인도 동일한 픽셀 크기로 리사이즈
-		Device::GetInst()->ResizeSwapChain(Vec2(static_cast<float>(targetW), static_cast<float>(targetH)));
-
 		if (m_EditorMode)
 			EditorMgr::GetInst()->SetUIVisible(false);
 	}
@@ -157,9 +164,8 @@ void Engine::ToggleFullScreen()
 		SetWindowLongPtr(m_hWnd, GWL_STYLE, uStyle);
 
 		RECT rt = { 0, 0, (LONG)m_Resolution.x, (LONG)m_Resolution.y };
-		AdjustWindowRect(&rt, WS_OVERLAPPEDWINDOW, !!GetMenu(m_hWnd));
+		AdjustWindowRect(&rt, uStyle, !!GetMenu(m_hWnd));
 		SetWindowPos(m_hWnd, nullptr, 0, 0, rt.right - rt.left, rt.bottom - rt.top, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-		Device::GetInst()->ResizeSwapChain(m_Resolution);
 
 		if (m_EditorMode)
 			EditorMgr::GetInst()->SetUIVisible(true);

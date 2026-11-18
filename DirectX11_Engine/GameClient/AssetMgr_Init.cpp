@@ -2,11 +2,13 @@
 #include "AssetMgr.h"
 #include "PathMgr.h"
 
-void AssetMgr::Init() 
+HRESULT AssetMgr::Init()
 {
 	CreateEngineMesh();
 
-	CreateEngineShader();
+	const HRESULT result = CreateEngineShader();
+	if (FAILED(result))
+		return result;
 
 	CreateEngineTexture();
 
@@ -15,6 +17,8 @@ void AssetMgr::Init()
 	//CreateEngineSprite();
 
 	//CreateEnginePrefab();
+
+	return S_OK;
 }
 
 void AssetMgr::CreateAssetByCode()

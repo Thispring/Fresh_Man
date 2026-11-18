@@ -11,6 +11,7 @@
 #include "AMesh.h"
 #include "KeyMgr.h"
 #include "TimeMgr.h"
+#include "imgui/imgui_impl_win32.h"
 
 // 전역 변수:
 HINSTANCE hInst;                                    // 현재 인스턴스입니다.
@@ -56,7 +57,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // 윈도우 창 생성 완료 시점
     hInst = hInstance;
 
-    // Engine 초기화    
+    // 메인 창을 만들기 전에 모니터별 DPI 인식을 활성화합니다.
+    ImGui_ImplWin32_EnableDpiAwareness();
+
+    // Engine 초기화
     if (FAILED(Engine::GetInst()->Init(hInstance, 1600, 900, true)))
         return 0;
 

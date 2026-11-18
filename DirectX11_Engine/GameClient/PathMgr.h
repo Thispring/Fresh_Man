@@ -6,20 +6,19 @@ class PathMgr
 {
 	SINGLE(PathMgr)
 private:
-	// Windows에서 경로 글자수를 255로 제한하기 때문에 255 배열로 선언합니다.
-	wchar_t m_ContentPath[255];
+	wstring m_ContentPath;
 
 public:
 	//=========
 	// 멤버 함수
 	//=========
-	void Init();
+	HRESULT Init();
 
 
 	//=========
 	// Get, Set
 	//=========
-	const wchar_t* GetContentPath() { return m_ContentPath; }
+	const wchar_t* GetContentPath() const { return m_ContentPath.c_str(); }
 };
 
 // 자주 사용되는 함수 재정의

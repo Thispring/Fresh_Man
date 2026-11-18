@@ -104,7 +104,7 @@ int Engine::Init(HINSTANCE _hInst, UINT _Width, UINT _Height, bool _EditorMode)
     * 실제 게임 창은 윈도우 크기보다 작을 수 있기에 해결하기 위한 함수
     * 타이틀 창의 크기를 고려해서, 의도한 윈도우 크기를 반환
     **********************************************************/
-    AdjustWindowRect(&rt, WS_OVERLAPPEDWINDOW, !!GetMenu(m_hWnd));
+    AdjustWindowRect(&rt, Style, !!GetMenu(m_hWnd));
 
     /***************************************************
     * 윈도우 크기 및 위치 변경
@@ -127,7 +127,11 @@ int Engine::Init(HINSTANCE _hInst, UINT _Width, UINT _Height, bool _EditorMode)
     }
 
     // 실행파일과 같이 있는 Content 폴더의 경로를 계산
-    PathMgr::GetInst()->Init();
+    if (FAILED(PathMgr::GetInst()->Init()))
+    {
+        MessageBoxW(m_hWnd, L"실행 파일 경로를 확인할 수 없습니다.", L"콘텐츠 경로 초기화 실패", MB_OK | MB_ICONERROR);
+        return E_FAIL;
+    }
 
     // 1프레임 동안 동작하는데 걸리는 시간(Delta Time) 계산
     TimeMgr::GetInst()->Init();
@@ -149,7 +153,8 @@ int Engine::Init(HINSTANCE _hInst, UINT _Width, UINT _Height, bool _EditorMode)
     }
     
     // 엔진 기본 Asset들 생성
-    AssetMgr::GetInst()->Init();
+    if (FAILED(AssetMgr::GetInst()->Init()))
+        return E_FAIL;
 
     // Asset Load
     AssetMgr::GetInst()->LoadContent();

@@ -238,9 +238,7 @@ void EditorMgr::Init()
     m_isRelease = true;
 #endif
 
-    // Make process DPI aware and obtain main monitor scale
-    ImGui_ImplWin32_EnableDpiAwareness();
-    float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
+    float main_scale = ImGui_ImplWin32_GetDpiScaleForHwnd(Engine::GetInst()->GetMainWndHwnd());
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();

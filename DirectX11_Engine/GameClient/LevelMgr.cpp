@@ -208,11 +208,11 @@ void LevelMgr::Init()
 {
 	// NOTE(26-04-10): 릴리즈 빌드에서
 	// 해당 주석 해제
-//#ifndef _DEBUG
-//	// 릴리즈 빌드에서만 실행되는 코드
-//	::ChangeLevel(L"Level\\Intro.lv");
-//	::ChangeLevelState(LEVEL_STATE::PLAY);
-//#endif
+#ifndef _DEBUG
+	// 릴리즈 빌드에서만 실행되는 코드
+	::ChangeLevel(L"Level\\Intro.lv");
+	::ChangeLevelState(LEVEL_STATE::PLAY);
+#endif
 
 }
 

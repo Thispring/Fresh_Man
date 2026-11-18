@@ -557,6 +557,33 @@ call CodeGen.exe</Command>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="CopyRuntimeDlls" AfterTargets="AfterBuild"
+          Condition="'$(Platform)' == 'x64' And ('$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release')">
+    <PropertyGroup>
+      <_RuntimeDllRoot>$(MSBuildProjectDirectory)\..\Project_DLL</_RuntimeDllRoot>
+      <_FmodDll Condition="'$(Configuration)' == 'Debug'">fmodL64.dll</_FmodDll>
+      <_FmodDll Condition="'$(Configuration)' == 'Release'">fmod64.dll</_FmodDll>
+      <_OtherFontConfiguration Condition="'$(Configuration)' == 'Debug'">Release</_OtherFontConfiguration>
+      <_OtherFontConfiguration Condition="'$(Configuration)' == 'Release'">Debug</_OtherFontConfiguration>
+      <_OutputFontDll>$(TargetDir)FW1FontWrapper.dll</_OutputFontDll>
+      <_OtherFontDll>$(_RuntimeDllRoot)\FontEngineDll\$(_OtherFontConfiguration)\FW1FontWrapper.dll</_OtherFontDll>
+      <_CompareFontDlls Condition="Exists('$(_OutputFontDll)') And Exists('$(_OtherFontDll)')">true</_CompareFontDlls>
+    </PropertyGroup>
+
+    <!-- Both configurations share the output folder and use the same font DLL filename. -->
+    <GetFileHash Files="$(_OutputFontDll)" Condition="'$(_CompareFontDlls)' == 'true'">
+      <Output TaskParameter="Hash" PropertyName="_OutputFontDllHash" />
+    </GetFileHash>
+    <GetFileHash Files="$(_OtherFontDll)" Condition="'$(_CompareFontDlls)' == 'true'">
+      <Output TaskParameter="Hash" PropertyName="_OtherFontDllHash" />
+    </GetFileHash>
+
+    <Copy SourceFiles="$(_RuntimeDllRoot)\FontEngineDll\$(Configuration)\FW1FontWrapper.dll"
+          DestinationFiles="$(_OutputFontDll)"
+          Condition="!Exists('$(_OutputFontDll)') Or ('$(_CompareFontDlls)' == 'true' And '$(_OutputFontDllHash)' == '$(_OtherFontDllHash)')" />
+    <Copy SourceFiles="$(_RuntimeDllRoot)\$(_FmodDll)" DestinationFolder="$(TargetDir)"
+          Condition="!Exists('$(TargetDir)$(_FmodDll)')" />
+  </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

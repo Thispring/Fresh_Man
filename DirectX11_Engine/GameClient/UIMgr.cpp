@@ -96,8 +96,7 @@ void UIMgr::RenderOptionsWindow()
     if (!m_ShowOptions)
         return;
 
-    ImGuiIO& io = ImGui::GetIO();
-    ImVec2 center(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
+    const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 
     ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
     ImGui::SetNextWindowFocus();
@@ -260,8 +259,7 @@ void UIMgr::RenderOptionsWindow()
     }
 
     // ── 중첩 팝업: 반드시 부모 EndPopup() 이전에 위치 ────────
-    ImVec2 exitCenter(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
-    ImGui::SetNextWindowPos(exitCenter, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
     if (ImGui::BeginPopupModal("Exit?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -300,8 +298,7 @@ void UIMgr::RenderCreditWindow()
         return;
 
     // ── 1. 화면 중앙에 위치 고정 ──────────────────────────────
-    ImGuiIO& io = ImGui::GetIO();
-    ImVec2 center(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
+    const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 
     // SetNextWindowPos(위치, 조건, 피벗)
     // ImGuiCond_Always : 매 프레임 강제 고정

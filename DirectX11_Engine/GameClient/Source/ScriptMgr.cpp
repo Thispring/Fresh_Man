@@ -524,7 +524,7 @@ SCRIPT_TYPE ScriptMgr::GetScriptType(const char* _strScriptName)
 void ScriptMgr::GenerateScriptFiles(const std::wstring& _strScriptName)
 {
 	if (_strScriptName.empty()) return;
-	std::wstring scriptFolder = L"C:\\Users\\141245124\\Documents\\GitHub\\Make_Game_With_DirectX11_Engine\\DirectX11_Engine\\GameClient\\Source\\Scripts\\";
+	std::wstring scriptFolder = L"C:\\Users\\OGS\\Documents\\GitHub\\Fresh_Man\\DirectX11_Engine\\GameClient\\Source\\Scripts\\";
 	if (scriptFolder.empty()) return;
 
 	std::wstring headerPath = scriptFolder + _strScriptName + L".h";

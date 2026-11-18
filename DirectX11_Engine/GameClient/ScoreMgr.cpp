@@ -4,7 +4,7 @@
 #include "FontMgr.h"
 #include "LevelMgr.h"
 #include "RenderMgr.h"
-#include "Engine.h"
+#include "Device.h"
 
 int ScoreMgr::m_Score = 0;
 int ScoreMgr::m_HighScore = 0;
@@ -110,7 +110,7 @@ void ScoreMgr::RenderHighScore()
 	if (m_HighScore <= 0)
 		return;
 
-	Vec2 res = Engine::GetInst()->GetResolution();
+	const Vec2 res = Device::GetInst()->GetRenderResolution();
 	wstring score = L"HighScore:  " + to_wstring(m_HighScore);
 
 	// 텍스트 크기 측정
@@ -130,7 +130,7 @@ void ScoreMgr::RenderHighScore()
 
 void ScoreMgr::RenderCurScore()
 {
-	Vec2 res = Engine::GetInst()->GetResolution();
+	const Vec2 res = Device::GetInst()->GetRenderResolution();
 	wstring score = L"Current Score:  " + to_wstring(m_Score);
 
 	// 텍스트 크기 측정

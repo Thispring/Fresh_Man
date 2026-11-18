@@ -11,7 +11,7 @@
 #include "Layer.h"
 
 #include "GameObject.h"
-#include "Engine.h"
+#include "Device.h"
 
 CCamera::CCamera()
 	: Component(COMPONENT_TYPE::CAMERA)
@@ -253,19 +253,14 @@ void CCamera::LoadFromLevelFile(FILE* _File)
 
 Vec3 CCamera::ScreenToWorldPos(const Vec2& _ScreenPos, float _ZNormalized /*= 0.f*/)
 {
-	// 엔진 해상도 (클라이언트 픽셀)
-	Vec2 res = Engine::GetInst()->GetResolution();
-	float vpX = 0.f;
-	float vpY = 0.f;
-	float vpW = res.x;
-	float vpH = res.y;
+	const Vec2 res = Device::GetInst()->GetRenderResolution();
 
 	// XMVector3Unproject expects screen coords: (x, y, z), viewport and matrices
 	XMVECTOR screenVec = XMVectorSet(_ScreenPos.x, _ScreenPos.y, _ZNormalized, 0.f);
 
 	XMVECTOR worldVec = XMVector3Unproject(
 		screenVec,
-		vpX, vpY, vpW, vpH,
+		0.f, 0.f, res.x, res.y,
 		0.0f, 1.0f,
 		m_matProj,
 		m_matView,
@@ -283,7 +278,7 @@ Vec3 CCamera::ScreenToWorldPos(const Vec2& _ScreenPos, float _ZNormalized /*= 0.
 
 Vec2 CCamera::WorldToScreenPos(const Vec3& _WorldPos)
 {
-    Vec2 res = Engine::GetInst()->GetResolution();
+    const Vec2 res = Device::GetInst()->GetRenderResolution();
 
     XMVECTOR worldVec = XMVectorSet(_WorldPos.x, _WorldPos.y, _WorldPos.z, 1.f);
 

@@ -79,8 +79,9 @@ void KeyMgr::Init()
 
 void KeyMgr::Tick()
 {
+	const HWND mainWindow = Engine::GetInst()->GetMainWndHwnd();
 	// GetFocus : 현재 포커싱 중인 윈도우 핸들 반환
-	if (GetFocus() == Engine::GetInst()->GetMainWndHwnd() && m_Active)
+	if (GetFocus() == mainWindow && m_Active)
 	{
 		for (UINT i = 0; i < (UINT)KEY::KEY_END; ++i)
 		{
@@ -144,16 +145,11 @@ void KeyMgr::Tick()
 
 	}
 
-	// 마우스 좌표 계산
-	POINT pt = {};
-	GetCursorPos(&pt); 	// 윈도우 기준 마우스 좌표
-	ScreenToClient(Engine::GetInst()->GetMainWndHwnd(), &pt); 	// 클라이언트(윈도우 핸들) 기준 마우스 좌표
-
+	// 화면 좌표를 렌더링에 사용하는 클라이언트 픽셀 좌표로 변환합니다.
 	m_MousePrevPos = m_MousePos;
-	m_MousePos = Vec2((float)pt.x, (float)pt.y);
-	// 두 연산을 통해 이전 프레임 마우스 좌표와 현재 프레임 마우스 좌표의
-	// 이동 변화량을 알 수 있다.
+	POINT cursor = {};
+	if (GetCursorPos(&cursor) && ScreenToClient(mainWindow, &cursor))
+		m_MousePos = Vec2(static_cast<float>(cursor.x), static_cast<float>(cursor.y));
 
-	// 마우스 진행 방향
 	m_MouseDir = m_MousePos - m_MousePrevPos;
 }

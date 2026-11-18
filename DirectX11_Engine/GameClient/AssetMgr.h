@@ -23,14 +23,14 @@ public:
 	// 멤버 함수
 	//=========
 	// Asset을 초기화 (현재는 정점으로 만든 Mesh)
-	void Init();
+	HRESULT Init();
 
 	// map을 이용해 Asset을 찾는 함수
 	void AddAsset(const wstring& _Key, Ptr<Asset> _Asset);
 	Ptr<Asset> FindAsset(ASSET_TYPE _Type, const wstring& _Key);
 	
 	void CreateEngineMesh();
-	void CreateEngineShader();
+	HRESULT CreateEngineShader();
 	void CreateEngineTexture();
 	void CreateEngineMaterial();
 	void CreateEngineSprite();
